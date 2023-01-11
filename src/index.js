@@ -1,3 +1,14 @@
 import { imageApi } from "./js/fetch";
-let cat = 'cat';
-imageApi(cat);
+
+
+
+const formEL = document.querySelector('#search-form');
+formEL.addEventListener('submit', onSearch);
+
+function onSearch(evt) {
+    evt.preventDefault();
+    const searchQuery = evt.currentTarget.elements.searchQuery.value
+    .trim()
+    .toLowerCase();
+    imageApi(searchQuery);
+}
