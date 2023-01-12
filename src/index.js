@@ -1,5 +1,5 @@
 import { imageApi } from "./js/fetch";
-
+import Notiflix from "notiflix";
 
 
 const formEL = document.querySelector('#search-form');
