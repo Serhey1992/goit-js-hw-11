@@ -11,6 +11,12 @@ const parameters = '&image_type=photo&orientation=horizontal&safesearch=true&per
 
 export function imageApi(searchQuery) {
   return fetch(`${BASE_URL}?key=${key}&q=${searchQuery}${parameters}&page=${page}`)
-  .then(response => {console.log(response)})
+    .then(response => {
+      if (!response.ok) {
+      throw new Error(console.log("Fail!"))
+      };
+
+      return response.json();
+  })
    
 };
