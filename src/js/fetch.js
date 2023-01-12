@@ -3,7 +3,7 @@
 import axios from "axios";
 import Notiflix from "notiflix";
 export let page = 1;
-export let query = null;
+
 
 const BASE_URL = 'https://pixabay.com/api/';
 const key = '32740167-9e99cf2539bcbb0df868cbe2b';

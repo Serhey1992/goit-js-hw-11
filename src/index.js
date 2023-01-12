@@ -1,27 +1,41 @@
 import { imageApi } from "./js/fetch";
 import Notiflix from "notiflix";
-
+import { page } from "./js/fetch";
+import simpleLightbox from "simplelightbox";
 
 const formEL = document.querySelector('#search-form');
 const galleryEl = document.querySelector('.gallery');
+const loadBtn = document.querySelector('.load-more');
 
 formEL.addEventListener('submit', onSearch);
+loadBtn.addEventListener('click', onBtnClick);
 
 function onSearch(evt) {
-    evt.preventDefault();
-    const searchQuery = evt.currentTarget.elements.searchQuery.value
-    .trim()
-    .toLowerCase();
+  evt.preventDefault();
+  galleryEl.innerHTML = '';
+
+  const searchQuery = evt.currentTarget.elements.searchQuery.value
+  .trim()
+  .toLowerCase();
+  
+  if (!searchQuery) {
+    Notiflix.Notify.failure('Enter something');
+    return
+  }
     
-    imageApi(searchQuery).then(gallery => createGalleryMarkup(gallery))
+  imageApi(searchQuery).then(gallery => {
+    const { hits, totalHits } = gallery;
+    createGalleryMarkup(hits, totalHits);
+    loadBtn.hidden = false;
+    })
     .catch(error => {
-      Notify.failure(
+      Notiflix.Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
       );
     })
 };
 
-function createGalleryMarkup({gallery:{hits, totalHits}}) {
+function createGalleryMarkup(hits, totalHits) {
     const markup = hits.map(({ webformatURL, tags, likes, views, comments, downloads }) => `
     <div class="photo-card">
         <img src="${webformatURL}" alt="${tags}" loading="lazy" />
@@ -40,6 +54,21 @@ function createGalleryMarkup({gallery:{hits, totalHits}}) {
             </p>
         </div>
     </div>`);
-    Notify.success(`Hooray! We found ${totalHits} images.`);
+    Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
     galleryEl.innerHTML = markup.join('');
+};
+
+function onBtnClick() {
+  page += 1;
+  loadBtn.hidden = true;
+
+  imageApi(page).then(gallery => {
+    const { hits, totalHits } = gallery;
+    console.log(gallery);
+    createGalleryMarkup(hits, totalHits);
+    loadBtn.hidden = false;
+    // if (hits === totalHits) {
+    //   loadBtn.hidden = true;
+    // }
+    })
 }
