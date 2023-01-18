@@ -1,5 +1,7 @@
 import Notiflix from "notiflix";
 import { getImgApi } from "./js/fetchImg";
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const formEl = document.querySelector('#search-form');
 const galleryEl = document.querySelector('.gallery');
@@ -11,6 +13,8 @@ let query = '';
 
 formEl.addEventListener('submit', onFormSubmit);
 loadBtn.addEventListener('click', onLoadBtnClick);
+
+const lightbox = new SimpleLightbox('.gallery a');
 
 async function onFormSubmit(evt) {
     evt.preventDefault();
@@ -25,12 +29,17 @@ async function onFormSubmit(evt) {
     try {
         const searchData = await getImgApi(query, page);
         const { hits, totalHits } = searchData;
+        if (hits.length === 0) {
+          Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.');
+        return  
+        }
 
         createGalleryMarkup(hits);
         Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
         if (totalHits > 40) {
             loadBtn.hidden = false;
         }
+        lightbox.refresh();
     } catch (error) {
         Notiflix.Notify.failure('Something went wrong! Please retry');
         console.log(error);
@@ -65,7 +74,8 @@ async function onLoadBtnClick() {
     const response = await getImgApi(query, page);
     const { hits, totalHits } = response;
     createGalleryMarkup(hits);
-     last_page = totalHits / 40 - page;
+    last_page = totalHits / 40 - page;
+    lightbox.refresh();
   if (last_page < 1) {
       loadBtn.hidden = true;
     Notiflix.Notify.info(
