@@ -15,17 +15,17 @@ loadBtn.addEventListener('click', onLoadBtnClick);
 async function onFormSubmit(evt) {
     evt.preventDefault();
     query = evt.currentTarget.elements.searchQuery.value.trim().toLowerCase();
-    if (query === '') {
-        galleryEl.innerHTML = '';
-        loadBtn.hidden = true;
+    galleryEl.innerHTML = '';
+    loadBtn.hidden = true;
+    if (!query) {
+        Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.');
+        return
     }
+
     try {
         const searchData = await getImgApi(query, page);
         const { hits, totalHits } = searchData;
-        if (hits.length === 0) {
-            Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.');
-            return;
-        }
+
         createGalleryMarkup(hits);
         Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
         if (totalHits > 40) {

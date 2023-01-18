@@ -6,7 +6,7 @@
     padding: 15px;
 }
 .photo-img{
-    width: 300px;
+    width: 200px;
     height: 150px;
     object-fit: cover;
 }
@@ -18,7 +18,4 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-}
-.js-load-btn {
-    display: none;
 }
